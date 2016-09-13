@@ -1,0 +1,21 @@
+{
+  "name": "tinyrouter",
+  "version": "0.0.0",
+  "description": "A tiny router base implementation",
+  "main": "lib/index.js",
+  "repository": "attrs/tinyrouter",
+  "author": "joje <joje.attrs@gmail.com>",
+  "homepage": "https://github.com/attrs/tinyrouter",
+  "license": "MIT",
+  "files": [
+    "lib",
+    "LICENSE",
+    "README.md"
+  ],
+  "keywords": [
+    "router"
+  ],
+  "dependencies": {
+    "route-pattern": "0.0.6"
+  }
+}
