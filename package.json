@@ -1,6 +1,6 @@
 {
   "name": "tinyrouter",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A tiny router base implementation",
   "main": "lib/index.js",
   "repository": "attrs/tinyrouter",
