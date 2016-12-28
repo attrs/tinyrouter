@@ -16,6 +16,7 @@
     "router"
   ],
   "dependencies": {
-    "route-pattern": "0.0.6"
+    "route-pattern": "0.0.6",
+    "tinyevent": "^0.1.0"
   }
 }
