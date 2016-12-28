@@ -2,7 +2,7 @@
   "name": "tinyrouter",
   "version": "0.2.0",
   "description": "A tiny router base implementation",
-  "main": "lib/index.js",
+  "main": "lib/tinyrouter.js",
   "repository": "attrs/tinyrouter",
   "author": "joje <joje.attrs@gmail.com>",
   "homepage": "https://github.com/attrs/tinyrouter",
