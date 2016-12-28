@@ -1,22 +1,33 @@
 {
   "name": "tinyrouter",
   "version": "0.2.1",
-  "description": "A tiny router base implementation",
+  "description": "router base implementation",
   "main": "lib/tinyrouter.js",
   "repository": "attrs/tinyrouter",
   "author": "joje <joje.attrs@gmail.com>",
   "homepage": "https://github.com/attrs/tinyrouter",
   "license": "MIT",
+  "dependencies": {
+    "route-pattern": "0.0.6",
+    "tinyevent": "^0.1.0"
+  },
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "gulp-header": "^1.8.3",
+    "gulp-rename": "^1.2.2",
+    "gulp-rimraf": "^0.2.0",
+    "gulp-uglify": "^1.5.3",
+    "gulp-util": "^3.0.7",
+    "webpack": "^1.13.1",
+    "webpack-stream": "^3.2.0"
+  },
   "files": [
     "lib",
+    "dist",
     "LICENSE",
     "README.md"
   ],
   "keywords": [
     "router"
-  ],
-  "dependencies": {
-    "route-pattern": "0.0.6",
-    "tinyevent": "^0.1.0"
-  }
+  ]
 }
