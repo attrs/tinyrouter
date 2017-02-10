@@ -1,3 +1,11 @@
+/*!
+* tinyrouter
+* https://github.com/attrs/tinyrouter
+*
+* Copyright attrs and others
+* Released under the MIT license
+* https://github.com/attrs/tinyrouter/blob/master/LICENSE
+*/
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
 		module.exports = factory();
@@ -59,20 +67,6 @@ return /******/ (function(modules) { // webpackBootstrap
 	var RoutePattern = __webpack_require__(10);
 	var Events = __webpack_require__(11);
 	
-	
-	if( !String.prototype.startsWith ) {
-	  String.prototype.startsWith = function(searchString, position){
-	    position = position || 0;
-	    return this.substr(position, searchString.length) === searchString;
-	  };
-	}
-	
-	if( !String.prototype.endsWith ) {
-	  String.prototype.endsWith = function(suffix) {
-	    return this.indexOf(suffix, this.length - suffix.length) !== -1;
-	  };
-	}
-	
 	if( !Array.prototype.forEach ) {
 	  Array.prototype.forEach = function(callback){
 	    for (var i = 0; i < this.length; i++){
@@ -90,6 +84,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	  };
 	}
 	
+	function endsWith(str, suffix) {
+	  return str.indexOf(suffix, str.length - suffix.length) !== -1;
+	}
 	
 	function patternize(source, ignoresubdir) {
 	  var pettern = RoutePattern.fromString(source);
@@ -117,8 +114,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	function dividepath(axis, full) {
 	  if( axis[0] === '/' ) axis = axis.substring(1);
 	  if( full[0] === '/' ) full = full.substring(1);
-	  if( axis.endsWith('/') ) axis = axis.substring(0, axis.length - 1);
-	  if( full.endsWith('/') ) full = full.substring(0, full.length - 1);
+	  if( endsWith(axis, '/') ) axis = axis.substring(0, axis.length - 1);
+	  if( endsWith(full, '/') ) full = full.substring(0, full.length - 1);
 	  if( !axis ) return {
 	    sub: '/' + full,
 	    parent: ''
@@ -177,6 +174,9 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var oParams = req.params = req.params || {};
 	    var finished = false;
 	    
+	    req.routes = req.routes || [];
+	    req.routes.splice(0, 0, body);
+	    
 	    var next = function(err) {
 	      if( finished ) return console.error('next function twice called.', id, err);
 	      finished = true;
@@ -194,7 +194,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	          request: req,
 	          response: res,
 	          error: err
-	        });
+	        }, req.routes);
 	        
 	        return onext && onext(err);
 	      }
@@ -258,7 +258,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	          url: req.url,
 	          request: req,
 	          response: res
-	        }, 'up');
+	        }, req.routes);
 	        
 	        return forward();
 	      }
@@ -289,7 +289,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        url: req.url,
 	        request: req,
 	        response: res
-	      }, 'up');
+	      }, req.routes);
 	      
 	      route.fn.apply(body, [req, res, forward]);
 	    };
@@ -321,13 +321,44 @@ return /******/ (function(modules) { // webpackBootstrap
 	    if( fn.__router__ || fn.Routable ) {
 	      fn.connect && fn.connect(body, 'up');
 	      events.connect(fn, 'down');
+	      
+	      fn.fire && fn.fire('add', {
+	        parent: body
+	      });
 	    }
 	    
 	    routes.push(route);
-	    events.fire('add', {
-	      router: body,
-	      config: route
+	    events.fire('addchild', {
+	      child: route
 	    });
+	    
+	    events.fire('subtree', {
+	      router: body,
+	      added: route
+	    }, 'up');
+	  };
+	  
+	  var remove = function(route) {
+	    var fn = route.fn;
+	    
+	    if( fn ) {
+	      fn.disconnect && fn.disconnect(body);
+	      events.disconnect(route.fn);
+	      
+	      fn.fire && fn.fire('remove', {
+	        parent: body
+	      });
+	    }
+	    
+	    routes.splice(routes.indexOf(route), 1);
+	    events.fire('removechild', {
+	      child: route
+	    });
+	    
+	    events.fire('subtree', {
+	      router: body,
+	      removed: route
+	    }, 'up');
 	  };
 	  
 	  body.use = function(path, fn) {
@@ -386,23 +417,18 @@ return /******/ (function(modules) { // webpackBootstrap
 	    });
 	    
 	    dropfns.forEach(function(route) {
-	      if( route.fn ) {
-	        route.fn.disconnect && route.fn.disconnect(body);
-	        events.connect(route.fn, 'down');
-	      }
-	      
-	      routes.splice(routes.indexOf(route), 1);
-	      
-	      events.fire('remove', {
-	        router: body,
-	        config: route
-	      });
+	      remove(route);
 	    });
 	    return this;
 	  };
 	  
 	  body.clear = function() {
+	    routes.forEach(function(route) {
+	      remove(route);
+	    });
+	    
 	    routes = [];
+	    events.fire('clear', {}, 'up');
 	    return this;
 	  };
 	  
