@@ -174,8 +174,8 @@ return /******/ (function(modules) { // webpackBootstrap
 	    var oParams = req.params = req.params || {};
 	    var finished = false;
 	    
-	    req.routes = req.routes || [];
-	    req.routes.splice(0, 0, body);
+	    req._routes = req._routes || [];
+	    req._routes.splice(0, 0, body);
 	    
 	    var next = function(err) {
 	      if( finished ) return console.error('next function twice called.', id, err);
@@ -194,7 +194,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	          request: req,
 	          response: res,
 	          error: err
-	        }, req.routes);
+	        }, req._routes);
 	        
 	        return onext && onext(err);
 	      }
@@ -258,7 +258,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	          url: req.url,
 	          request: req,
 	          response: res
-	        }, req.routes);
+	        }, req._routes);
 	        
 	        return forward();
 	      }
@@ -289,7 +289,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	        url: req.url,
 	        request: req,
 	        response: res
-	      }, req.routes);
+	      }, req._routes);
 	      
 	      route.fn.apply(body, [req, res, forward]);
 	    };
