@@ -1,6 +1,6 @@
 {
   "name": "tinyrouter",
-  "version": "0.2.5",
+  "version": "0.2.6",
   "description": "router base implementation",
   "main": "lib/tinyrouter.js",
   "repository": "attrs/tinyrouter",
